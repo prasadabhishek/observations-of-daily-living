@@ -1,0 +1,39 @@
+Select tname,info1text,info1value,info2text,info2value from observations where ptid = 'nshetty'
+
+select * from observations
+select infoname from infodetails where tname  = 'Blood Pressure'
+select * from category
+select distinct tname from infodetails
+
+drop table alerts
+create table alerts(
+alertid integer not null primary key,
+tname varchar2(50),
+infoname varchar2(20),
+infovalue varchar2(20),
+indicator varchar2(20),
+alertdate date
+);
+create sequence alert_seq;
+
+select * from healthfriends
+select * from users
+select * from patientclass
+
+select distinct cname from patientclass where ptid='scooper'
+
+select cname from patientclass where ptid='scooper'
+
+SELECT name 
+from users 
+where id in 
+(select P2.PTID from patientclass P1,patientclass P2,healthfriends H 
+where P1.cname=P2.cname and P1.ptid <> P2.ptid 
+and P1.ptid='scooper' 
+AND P1.CNAME='HIV' 
+AND P2.CNAME='HIV' 
+AND NOT exists (SELECT H.FRIENDID FROM healthfriends H WHERE H.PatientID=P1.ptid AND H.FRIENDID=P2.ptid))
+
+SELECT name from users where id in (select p2.PTID from patientclass P1,patientclass p2 where P1.cname=p2.cname and P1.ptid <> P2.ptid and P1.ptid='null' AND P1.CNAME='HIV' AND P2.CNAME='HIV' AND NOT exists (SELECT H.FRIENDID FROM healthfriends H WHERE H.PatientID=P1.ptid AND H.FRIENDID=P2.ptid))
+
+SELECT name from users where id in (select p2.PTID from patientclass P1,patientclass p2 where P1.cname=p2.cname and P1.ptid <> P2.ptid and P1.ptid='scooper' AND P1.CNAME='HIV' AND P2.CNAME='HIV' AND NOT exists (SELECT H.FRIENDID FROM healthfriends H WHERE H.PatientID=P1.ptid AND H.FRIENDID=P2.ptid))

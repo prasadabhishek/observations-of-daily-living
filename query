@@ -1,0 +1,105 @@
+--
+--create table ships (name varchar(20), 
+--yearLaunched integer, country varchar(20), numGuns integer,gunSize integer,displacement integer)
+
+select * from ships;
+select * from battles;
+
+update ships set country='usa' where yearlaunched=1943
+--insert into ships values ('New Jersey',1943,'USA',9,14,46000)
+--insert into ships values ('wakawaka',1913,'espanyol',8,16,23445);
+--insert into ships values ('contegut',1965,'latin',4,20,213124);
+--insert into ships values ('Gamamatin',1922,'brazil',12,16,234234);
+--insert into ships values ('valkyrie',1975,'argentina',23,34,5646456);
+--insert into ships values ('christmas',1945,'italy',9,12,45666);
+--insert into ships values ('gattuso',1945,'italy',11,12,45666);
+--
+--create table battles (ship varchar(20),battleName varchar(20),result varchar(10))
+--
+--insert into battles values ('New Jersey','WW1','sunk');
+--insert into battles values ('wakawaka','WW2','ok');
+--insert into battles values ('contegut','WW3','ok');
+--insert into battles values ('Gamamatin','WW2','damaged');
+--insert into battles values ('valkyrie','WW1','damaged');
+--insert into battles values ('christmas','WW2','sunk');
+--insert into battles values ('New Jersey','Surigao Strait','sunk');
+--insert into battles values ('wakawaka','Surigao Strait','sunk');
+--insert into battles values ('Gamamatin','Surigao Strait','sunk');
+--insert into battles values ('contegut','Surigao Strait','sunk');
+--insert into battles values ('valkyrie','Surigao Strait','sunk');
+--insert into battles values ('christmas','Surigao Strait','sunk');
+--insert into battles values ('gattuso','Surigao Strait','sunk');
+
+update battles set result='ok' where ship='valkyrie'
+
+
+select b1.ship , b2.ship from battles b1,ships
+left join battles b2 on b1.battlename=b2.battlename where b1.ship<>b2.ship
+
+--1--
+SELECT ships.name,ships.country,ships.numguns
+from ships
+where ships.yearlaunched<1930 and ships.gunsize=16
+
+--2--
+select ships.name
+from ships
+where ships.gunsize >= (select MAX(ships.gunsize) from ships)
+
+--3--
+select ships.name,ships.gunsize
+from ships
+where gunsize = 
+( select gunsize 
+  from (SELECT b.*,  row_number() OVER (ORDER BY gunsize desc) rn
+          FROM (select gunsize from ships  order by gunsize desc) b)
+  where rn =2)
+  
+  select s1.name,s1.gunsize
+  from ships s1
+  where 2=(select count(*) from ships s2 where s1.gunsize<=s2.gunsize)
+  
+  
+ --4--
+  select country , AVG(numguns)
+  from ships
+  group by country
+  
+  
+  --5--
+ select distinct s1.country , s2.country
+ from ships s1,ships s2,battles b1,battles b2
+ where b1.battlename=b2.battlename
+ and s1.name=b1.ship and s2.name=b2.ship
+ and s1.country<s2.country
+ order by s1.country
+ 
+ --6-- 
+ select country,count(*) as numSunk
+ from ships 
+ left join battles 
+ on name=ship
+ where battles.battlename='Surigao Strait'
+ and result='sunk'
+ group by country
+having count(*) >=0
+
+select count (distinct country)
+from ships
+
+
+
+
+
+
+
+select distinct S.sid AS SupplierID,S.sname AS SupplierName,PJ.jname AS ProjectName,count(C.pid) As PartsSupplied
+from Catalog C,Suppliers S,Projects PJ 
+where NOT EXISTS( 
+(select PA.jid from projects PA where deptid=5) 
+minus
+(select C.jid from Catalog C where C.sid=S.sid))
+AND S.sid=C.sid
+AND PJ.jid=C.jid
+group by S.sid,S.sname,PJ.jname
+order by S.sname,PJ.jname
